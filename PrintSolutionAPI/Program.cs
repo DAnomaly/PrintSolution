@@ -1,4 +1,4 @@
-namespace WebAPI
+namespace PrintSolutionAPI
 {
     public class Program
     {

@@ -12,9 +12,20 @@ namespace Danomaly.PrintSolution
         {
             if (args.Length == 0 || args[0] == "list")
             {
-                string[] printQueues = PrintController.GetPrintQueues();
+                string[] printQueues = PrintUtil.GetPrintQueues();
                 foreach (string printer in printQueues)
                     Console.WriteLine(printer);
+            }
+            else if (args[0] == "status")
+            {
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Need more parameters.");
+                    Console.WriteLine("PrintCommand.exe status [printerName]");
+                    return;
+                }
+                string status = PrintUtil.GetPrinterStatus(args[1]);
+                Console.WriteLine(status);
             }
             else if (args[0] == "print")
             {
@@ -24,7 +35,7 @@ namespace Danomaly.PrintSolution
                     Console.WriteLine("PrintCommand.exe print [printerName] [filepath]");
                     return;
                 }
-                bool result = PrintController.PrintDocument(args[1], args[2], out string err);
+                bool result = PrintUtil.PrintDocument(args[1], args[2], out string err);
                 if (result)
                 {
                     Console.WriteLine("Success");

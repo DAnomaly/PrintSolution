@@ -8,7 +8,7 @@ using System.Printing;
 
 namespace Danomaly.PrintSolution
 {
-    public class PrintController
+    public class PrintUtil
     {
         /// <summary>
         /// 프린터 목록을 가져옵니다.
