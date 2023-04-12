@@ -2,8 +2,8 @@
 {
     public class PrinterDTO
     {
-        public string Name { get; set; }
-        public string Status { get; set; }
+        public string? Name { get; set; }
+        public string? Status { get; set; }
         public bool UseYN { get; set; }
     }
 }
