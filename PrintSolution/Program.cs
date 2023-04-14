@@ -24,7 +24,8 @@ namespace Danomaly.PrintSolution
                     Console.WriteLine("PrintCommand.exe status [printerName]");
                     return;
                 }
-                string status = PrintUtil.GetPrinterStatus(args[1]);
+                string printerName = args[1].Replace('+', ' ');
+                string status = PrintUtil.GetPrinterStatus(printerName);
                 Console.WriteLine(status);
             }
             else if (args[0] == "print")
@@ -35,7 +36,8 @@ namespace Danomaly.PrintSolution
                     Console.WriteLine("PrintCommand.exe print [printerName] [filepath]");
                     return;
                 }
-                bool result = PrintUtil.PrintDocument(args[1], args[2], out string err);
+                string printerName = args[1].Replace('+', ' ');
+                bool result = PrintUtil.PrintDocument(printerName, args[2], out string err);
                 if (result)
                 {
                     Console.WriteLine("Success");
