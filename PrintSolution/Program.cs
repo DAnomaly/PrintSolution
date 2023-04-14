@@ -1,4 +1,5 @@
 ﻿using System;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Danomaly.PrintSolution
 {
@@ -25,8 +26,9 @@ namespace Danomaly.PrintSolution
                     return;
                 }
                 string printerName = args[1].Replace('+', ' ');
-                string status = PrintUtil.GetPrinterStatus(printerName);
-                Console.WriteLine(status);
+                bool useYN = PrintUtil.GetPrinterStatus(printerName, out string status);
+                Console.WriteLine(useYN);
+                Console.Write(status);
             }
             else if (args[0] == "print")
             {
