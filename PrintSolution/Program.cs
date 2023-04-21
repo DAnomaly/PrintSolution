@@ -27,8 +27,7 @@ namespace Danomaly.PrintSolution
                 }
                 string printerName = args[1].Replace('+', ' ');
                 bool useYN = PrintUtil.GetPrinterStatus(printerName, out string status);
-                Console.WriteLine(useYN);
-                Console.Write(status);
+                Console.Write(useYN + "||" + status);
             }
             else if (args[0] == "print")
             {

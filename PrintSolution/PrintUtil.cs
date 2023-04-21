@@ -43,6 +43,7 @@ namespace Danomaly.PrintSolution
         public static bool GetPrinterStatus(string printerName, out string status)
         {
             bool useYN = true;
+            status = string.Empty;
             using (PrintServer printServer = new PrintServer())
             {
                 try
@@ -120,6 +121,9 @@ namespace Danomaly.PrintSolution
                             }
                         }
                     }
+                }
+                catch (WebException)
+                {
                 }
                 catch (Exception printerEx)
                 {
