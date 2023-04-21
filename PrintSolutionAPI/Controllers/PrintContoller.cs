@@ -29,7 +29,7 @@ namespace PrintSolutionAPI.Controllers
             {
                 if (printerName == "") continue;
 
-                string status = Command.GetOutput("PrintSolution.exe", "status " + printerName);
+                string status = Command.GetOutput("PrintSolution.exe", "status " + printerName.Replace(" ","+"));
                 status = status.Replace("\r\n", "");
                 PrinterDTO printerDTO = new PrinterDTO()
                 {

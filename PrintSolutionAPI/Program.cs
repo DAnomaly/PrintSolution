@@ -20,14 +20,13 @@ namespace PrintSolutionAPI
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
+            } 
 
             app.UseAuthorization();
 
-
             app.MapControllers();
 
-            app.Run();
+            app.Run("http://localhost:9203");
         }
     }
 }
