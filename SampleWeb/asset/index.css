@@ -1,0 +1,19 @@
+@charset "UTF-8";
+
+div.menu-div {
+    margin: 5px;
+}
+
+span.menu {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 120px;
+    height: 24px;
+}
+
+.item {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 220px;
+    height: 24px;
+}
