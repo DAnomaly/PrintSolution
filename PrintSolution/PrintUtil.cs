@@ -30,6 +30,12 @@ namespace Danomaly.PrintSolution
                         printers.Add(printer.Name);
             }
 
+            // 결과 내용을 저장합니다.
+            DirectoryInfo printerFolder = new DirectoryInfo("./PRINT");
+            if (!printerFolder.Exists) printerFolder.Create();
+
+            // TODO : 프린터 이름 파일을 만듭시다.
+
             return printers.ToArray();
         }
 
@@ -54,60 +60,66 @@ namespace Danomaly.PrintSolution
                     if (printStatus == PrintQueueStatus.None)
                     {
                         string ip = printQueue.QueuePort.Name;
-                        if (ip.IndexOf(':') != -1) 
+                        if (ip.IndexOf(':') != -1)
                             ip = ip.Substring(0, ip.IndexOf(':'));
                         string url = ip;
                         if (!url.Contains("http"))
                             url = "http://" + ip;
 
                         #region SyncThru 웹서버에 통신
-                        #region 1. http://[프린터IP주소]에 통신
-                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                        request.Method = "GET";
-                        request.Timeout = 30 * 1000;
-                        HttpStatusCode statusCode;
-                        using (HttpWebResponse resp = (HttpWebResponse)request.GetResponse())
-                            statusCode = resp.StatusCode;
-                        #endregion
-
-                        #region 2. http://[프린터IP주소]에 통신이 가능하면 sws url에서 프린터 상태 가져오기
-                        string responseText = string.Empty;
-                        if (statusCode == HttpStatusCode.OK)
+                        try
                         {
-                            if (url[url.Length - 1] != '/')
-                                url += '/';
-                            url += "sws/app/information/home/home.json";
-                            request = (HttpWebRequest)WebRequest.Create(url);
+                            #region 1. http://[프린터IP주소]에 통신
+                            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                             request.Method = "GET";
-                            request.Timeout = 10 * 1000;
+                            request.Timeout = 30 * 1000;
+                            HttpStatusCode statusCode;
                             using (HttpWebResponse resp = (HttpWebResponse)request.GetResponse())
-                                if (resp.StatusCode == HttpStatusCode.OK)
-                                {
-                                    Stream respStream = resp.GetResponseStream();
-                                    using (StreamReader sr = new StreamReader(respStream))
-                                        responseText = sr.ReadToEnd();
-                                }
-                        }
-                        #endregion
+                                statusCode = resp.StatusCode;
+                            #endregion
 
-                        #region 3. 응답 분석
-                        if (responseText !=  string.Empty)
-                        {
-                            // responseText = responseText.Replace(" ", "");
-                            JObject jObject = JObject.Parse(responseText);
-                            if (jObject["status"].Value<Int16>("hrDeviceStatus") >= 0 && jObject["status"].Value<Int16>("hrDeviceStatus") <= 2)
-                                useYN = true;
-                            else
-                                useYN = false;
-                            status = jObject["status"].Value<string>("status1");
-                            if (jObject["status"].Value<string>("status2") != string.Empty)
-                                status += "\r\n" + jObject["status"].Value<string>("status2");
-                            if (jObject["status"].Value<string>("status3") != string.Empty)
-                                status += "\r\n" + jObject["status"].Value<string>("status3");
-                            if (jObject["status"].Value<string>("status4") != string.Empty)
-                                status += "\r\n" + jObject["status"].Value<string>("status4");
+                            #region 2. http://[프린터IP주소]에 통신이 가능하면 sws url에서 프린터 상태 가져오기
+                            string responseText = string.Empty;
+                            if (statusCode == HttpStatusCode.OK)
+                            {
+                                if (url[url.Length - 1] != '/')
+                                    url += '/';
+                                url += "sws/app/information/home/home.json";
+                                request = (HttpWebRequest)WebRequest.Create(url);
+                                request.Method = "GET";
+                                request.Timeout = 10 * 1000;
+                                using (HttpWebResponse resp = (HttpWebResponse)request.GetResponse())
+                                    if (resp.StatusCode == HttpStatusCode.OK)
+                                    {
+                                        Stream respStream = resp.GetResponseStream();
+                                        using (StreamReader sr = new StreamReader(respStream))
+                                            responseText = sr.ReadToEnd();
+                                    }
+                            }
+                            #endregion
+
+                            #region 3. 응답 분석
+                            if (responseText != string.Empty)
+                            {
+                                // responseText = responseText.Replace(" ", "");
+                                JObject jObject = JObject.Parse(responseText);
+                                if (jObject["status"].Value<Int16>("hrDeviceStatus") >= 0 && jObject["status"].Value<Int16>("hrDeviceStatus") <= 2)
+                                    useYN = true;
+                                else
+                                    useYN = false;
+                                status = jObject["status"].Value<string>("status1");
+                                if (jObject["status"].Value<string>("status2") != string.Empty)
+                                    status += "\r\n" + jObject["status"].Value<string>("status2");
+                                if (jObject["status"].Value<string>("status3") != string.Empty)
+                                    status += "\r\n" + jObject["status"].Value<string>("status3");
+                                if (jObject["status"].Value<string>("status4") != string.Empty)
+                                    status += "\r\n" + jObject["status"].Value<string>("status4");
+                            }
+                            #endregion
                         }
-                        #endregion
+                        catch (WebException)
+                        {
+                        }
                         #endregion
                     }
                     else
@@ -121,9 +133,6 @@ namespace Danomaly.PrintSolution
                             }
                         }
                     }
-                }
-                catch (WebException)
-                {
                 }
                 catch (Exception printerEx)
                 {

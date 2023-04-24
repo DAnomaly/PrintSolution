@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 # visualStudio Config
 .vscode
+
+# Resource Folder
+PRINTER

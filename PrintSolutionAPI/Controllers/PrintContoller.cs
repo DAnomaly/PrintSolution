@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using PrintSolutionAPI.DTO;
+using PrintSolutionAPI.Scheduler;
 using PrintSolutionAPI.Util;
 using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 namespace PrintSolutionAPI.Controllers
 {
@@ -22,24 +25,28 @@ namespace PrintSolutionAPI.Controllers
         [Route("Show")]
         public IEnumerable<PrinterDTO> Show()
         {
-            string output = Command.GetOutput("PrintSolution.exe", "list");
-            string[] printerNames = output.Split("\r\n");
-
             List<PrinterDTO> printerList = new List<PrinterDTO>();
-            foreach (string printerName in printerNames)
-            {
-                if (printerName == "") continue;
 
-                string status = Command.GetOutput("PrintSolution.exe", "status " + printerName.Replace(" ","+"));
-                status = status.Replace("\r\n", "");
-                PrinterDTO printerDTO = new PrinterDTO()
+            DirectoryInfo di = new DirectoryInfo(LoadStatusSch.PrintFolderName);
+
+            foreach (FileInfo file in di.GetFiles())
+            {
+                string readData = string.Empty;
+                using (StreamReader fs = new StreamReader(file.OpenRead())) 
                 {
-                    Name = printerName,
-                    Status = status,
-                    UseYN = true
-                };
-                printerList.Add(printerDTO);
+                    string? line;
+                    while((line = fs.ReadLine()) != null)
+                    {
+                        if (readData != string.Empty)
+                            readData += "\r\n";
+                        readData += line;
+                    }
+                }
+                PrinterDTO? printerDTO = JsonSerializer.Deserialize<PrinterDTO>(readData);
+                if (printerDTO != null)
+                    printerList.Add(printerDTO);
             }
+
             return printerList.ToArray();
         }
 
