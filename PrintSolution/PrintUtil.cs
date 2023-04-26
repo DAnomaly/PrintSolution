@@ -30,12 +30,6 @@ namespace Danomaly.PrintSolution
                         printers.Add(printer.Name);
             }
 
-            // 결과 내용을 저장합니다.
-            DirectoryInfo printerFolder = new DirectoryInfo("./PRINT");
-            if (!printerFolder.Exists) printerFolder.Create();
-
-            // TODO : 프린터 이름 파일을 만듭시다.
-
             return printers.ToArray();
         }
 

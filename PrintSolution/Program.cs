@@ -1,5 +1,4 @@
 ﻿using System;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Danomaly.PrintSolution
 {
