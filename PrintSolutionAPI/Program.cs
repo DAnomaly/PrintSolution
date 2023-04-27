@@ -32,10 +32,10 @@ namespace PrintSolutionAPI
             app.MapControllers();
 
             app.UseCors(builder =>
-                builder.WithOrigins("http://127.0.0.1:5501")
+                builder.WithOrigins("*")
                        .AllowAnyHeader()
                 );
-            app.Run("http://localhost:9203");
+            app.Run("http://*:9203");
         }
     }
 }
