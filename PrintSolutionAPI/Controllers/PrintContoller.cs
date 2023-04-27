@@ -53,29 +53,44 @@ namespace PrintSolutionAPI.Controllers
         [HttpPost]
         [RequestSizeLimit(10_485_760)]
         [Route("Upload")]
-        public async Task<string> Upload(IFormFile file)
+        public async Task<IDictionary<string, Object>> Upload(IFormFile file)
         {
+
+            IDictionary<string, Object> response = new Dictionary<string, Object>();
+
             if (!Directory.Exists(folderName))
             {
                 Directory.CreateDirectory(folderName);
             }
 
-            if (file.Length > 0)
+            if (file != null && file.Length > 0)
             {
-                string realFilename = file.FileName;
-                string ext = realFilename.Substring(realFilename.LastIndexOf(".") + 1);
-                string filename = "UF" + (Directory.GetFiles(folderName).Length + 1) + "." + ext;
-                using (var fileStream = new FileStream(Path.Combine(folderName, filename), FileMode.Create))
+                try
                 {
-                    await file.CopyToAsync(fileStream);
+                    string realFilename = file.FileName;
+                    string ext = realFilename.Substring(realFilename.LastIndexOf(".") + 1);
+                    string filename = "UF" + (Directory.GetFiles(folderName).Length + 1) + "." + ext;
+                    using (var fileStream = new FileStream(Path.Combine(folderName, filename), FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+
+                    response.Add("message", "Success");
+                    response.Add("filename", filename);
                 }
-                return filename;
+                catch (Exception e)
+                {
+                    response.Add("message", "Fail : " + e.Message);
+                    response.Remove("filename");
+                }
             }
             else
             {
-                return "";
+                response.Add("message", "Fail : File is Empty!");
+                response.Remove("filename");
             }
 
+            return response;
         }
 
         [HttpGet]
