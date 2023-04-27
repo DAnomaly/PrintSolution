@@ -166,7 +166,7 @@ namespace Danomaly.PrintSolution
             err = "";
             try
             {
-                string ext = filepath.Substring(filepath.LastIndexOf('.')).ToLower();
+                string ext = filepath.Substring(filepath.LastIndexOf('.') + 1).ToLower();
 
                 if (ext == "pdf")
                 {

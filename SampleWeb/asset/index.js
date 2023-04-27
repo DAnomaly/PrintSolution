@@ -99,7 +99,6 @@ function printerListChangeEvent(e) {
 }
 
 function submitButtonClickEvent(e) {
-
     const submitMessage = document.getElementById('useYn');
     submitMessage.innerText = '파일 전송중...';
     submitMessage.style.color = '#131313';
@@ -130,7 +129,9 @@ function submitButtonClickEvent(e) {
                 submitMessage.innerText = '파일 전송완료';
                 submitMessage.style.color = '#131313';
 
-                setTimeout(orderPrint, 500);
+                setTimeout(function() {
+                    orderPrint(result.filename, printerName);
+                }, 500);
             } else {
                 submitMessage.innerText = '실패 : ' 
                     + result.message.substring(result.message.indexOf(':') + 2);
@@ -144,5 +145,27 @@ function submitButtonClickEvent(e) {
 }
 
 function orderPrint(filename, printer) {
-    // TODO
+    const submitMessage = document.getElementById('useYn');
+    submitMessage.innerText = '프린트 요청시작..';
+    submitMessage.style.color = '#131313';
+
+    $.ajax({
+        url: 'http://localhost:9203/Print/Call',
+        type: 'GET',
+        data: {"printer":printer, "filename":filename},
+        dataType: 'JSON',
+        success: function(response) {
+            if (response.result == true) {
+                submitMessage.innerText = '프린트 요청성공';
+                submitMessage.style.color = '#131313';
+            } else {
+                submitMessage.innerText = '요청실패 : ' + response.message;
+                submitMessage.style.color = '#D21312';
+            }
+        },
+        error: function() {
+            submitMessage.innerText = '실패 : 알수없는 원인으로 프린트 요청에 실패하였습니다. 관리자에게 문의하세요.';
+            submitMessage.style.color = '#D21312';
+        }
+    });
 }

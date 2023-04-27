@@ -99,7 +99,7 @@ namespace PrintSolutionAPI.Controllers
         {
             IDictionary<string, Object> response = new Dictionary<string, Object>();
 
-            string output = Command.GetOutput("PrintSolution.exe", "print " + printer + " " + folderName + @"\" + filename);
+            string output = Command.GetOutput("PrintSolution.exe", "print \"" + printer + "\" " + folderName + @"\" + filename);
             
             if (output.Contains("Success"))
             {
