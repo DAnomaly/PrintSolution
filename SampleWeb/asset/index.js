@@ -23,17 +23,46 @@ function onLoadEvent() {
 }
 
 function generateSelectOptions() {
-    document.getElementById('printerList').innerHTML = '';
+    const printerListElement = document.getElementById('printerList');
+    printerListElement.innerHTML = '';
+    
+    const preparedGroup = document.createElement('optgroup');
+    const unpreparedGroup = document.createElement('optgroup');
+    const noneGroup = document.createElement('optgroup');
+
+    preparedGroup.label = 'Prepared Printers';
+    unpreparedGroup.label = 'Unprepared Printers';
+    noneGroup.label = 'Unkown Printers';
+
     for (let i = 0; i < data.length; i++) {
         var optionTag = document.createElement('option');
         optionTag.value = i;
         optionTag.innerText = data[i].name;
 
-        document.getElementById('printerList').appendChild(optionTag);
+        if (data[i].useYN == true) {
+            if (data[i].status.toLowerCase() != 'none') {
+                preparedGroup.appendChild(optionTag);
+            } else {
+                noneGroup.appendChild(optionTag);
+            }
+        } else {
+            unpreparedGroup.appendChild(optionTag);
+        }
     }
 
-    loadPrinterStatus(0);
-    checkUseYn(0);
+    if (preparedGroup.childNodes.length > 0) {
+        printerListElement.appendChild(preparedGroup);
+    }
+    if (noneGroup.childNodes.length > 0) {
+        printerListElement.appendChild(noneGroup);
+    }
+    if (unpreparedGroup.childNodes.length > 0) {
+        printerListElement.appendChild(unpreparedGroup);
+    }
+
+    let nowIndex = printerListElement.value;
+    loadPrinterStatus(nowIndex);
+    checkUseYn(nowIndex);
 }
 
 function loadPrinterStatus(index) {
@@ -83,18 +112,9 @@ function submitButtonClickEvent(e) {
     formElement.appendChild(inputElement);
     var formData = new FormData(formElement);
 
-    let printerName = "";
-    if (printerName == "") {
-        var printerList = document.getElementById('printerList');
-        var selectValue = printerList.value;
-        var options = printerList.childNodes;
-        for (let i = 0; i < options.length; i++) {
-            if (selectValue == options[i].value) {
-                printerName = options.innerText;
-                break;
-            }
-        }
-    }
+    var selectValue = document.getElementById('printerList').value;
+    let printerName = data[Number.parseInt(selectValue)].name;
+    // console.log('printerName', printerName);
 
     console.log('DEBUG: File Send Start.')
     $.ajax({
