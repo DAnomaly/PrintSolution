@@ -130,6 +130,14 @@ namespace Danomaly.PrintSolution
                                     status += "\r\n" + jObject["status"].Value<string>("status3");
                                 if (jObject["status"].Value<string>("status4") != string.Empty)
                                     status += "\r\n" + jObject["status"].Value<string>("status4");
+
+                                while (status.Contains("  "))
+                                    status = status.Replace("  ", " ");
+                                if (status.Contains("\n"))
+                                    status = status.Replace("\n", string.Empty);
+                                if (status.Contains("\r"))
+                                    status = status.Replace("\r", string.Empty);
+                                status = status.Trim();
                             }
                             #endregion
                         }
