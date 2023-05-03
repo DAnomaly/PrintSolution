@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrintSolutionAPI", "PrintSo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCLProject", "PCLProject\PCLProject.csproj", "{C024034E-2434-4A15-A217-1A83EAA73DB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetPrintStatus", "GetPrintStatus\GetPrintStatus.csproj", "{CE6897E8-4E51-45C2-A6A5-6B92A5B79C24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C024034E-2434-4A15-A217-1A83EAA73DB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C024034E-2434-4A15-A217-1A83EAA73DB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C024034E-2434-4A15-A217-1A83EAA73DB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE6897E8-4E51-45C2-A6A5-6B92A5B79C24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE6897E8-4E51-45C2-A6A5-6B92A5B79C24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE6897E8-4E51-45C2-A6A5-6B92A5B79C24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE6897E8-4E51-45C2-A6A5-6B92A5B79C24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
