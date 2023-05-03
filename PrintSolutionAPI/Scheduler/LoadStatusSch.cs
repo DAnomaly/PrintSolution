@@ -11,7 +11,7 @@ namespace PrintSolutionAPI.Scheduler
 
         private static void Task()
         {
-            while (true)
+            while (Program.Running)
             {
                 // 작업 코드
                 #region 프린터 리스트, 정보, 상태 확인

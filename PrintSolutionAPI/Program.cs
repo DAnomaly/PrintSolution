@@ -4,8 +4,12 @@ namespace PrintSolutionAPI
 {
     public class Program
     {
+        public static bool Running { get; private set; }
+
         public static void Main(string[] args)
         {
+            Running = true;
+
             // Start Scheduler
             LoadStatusSch.Start();
 
@@ -35,7 +39,13 @@ namespace PrintSolutionAPI
                 builder.WithOrigins("*")
                        .AllowAnyHeader()
                 );
+
             app.Run("http://*:9203");
+
+            // After: Ctrl + C
+            Console.WriteLine("\r\nStoping Schedules...");
+            Running = false;
+
         }
     }
 }
