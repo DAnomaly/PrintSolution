@@ -19,6 +19,13 @@ namespace Danomaly.PrintSolution
         /// <returns>프린터 목록</returns>
         public static string[] GetPrintQueues()
         {
+            // Read Ignore File
+            string ignoreFilePath = "ignore.inf";
+            string[] ignorePatterns = File.ReadAllText(ignoreFilePath).Split('\n');
+            for (int i = 0; i < ignorePatterns.Length; i++)
+                if (ignorePatterns[i].Contains("\r"))
+                    ignorePatterns[i] = ignorePatterns[i].Replace("\r", string.Empty);
+
             List<string> printers = new List<string>();
             // 로컬 프린트 서버를 생성합니다.
             using (PrintServer printServer = new PrintServer())
@@ -26,8 +33,23 @@ namespace Danomaly.PrintSolution
                 // 연결된 프린터 목록을 가져옵니다.
                 PrintQueueCollection printQueues = printServer.GetPrintQueues();
                 foreach (PrintQueue printer in printQueues)
-                    if (!printer.Name.ToUpper().Equals("FAX") && !printer.Name.ToUpper().Contains("MICROSOFT") && !printer.Name.ToUpper().Contains("ONENOTE"))
+                {
+                    bool isIgnore = false;
+
+                    foreach (string ignorePattern in ignorePatterns)
+                    {
+                        if (ignorePattern != null && ignorePattern != string.Empty && printer.Name.ToUpper().Contains(ignorePattern))
+                        {
+                            isIgnore = true;
+                            break;
+                        }
+                    }
+
+                    if (isIgnore == false)
+                    {
                         printers.Add(printer.Name);
+                    }
+                }
             }
 
             return printers.ToArray();
