@@ -1,19 +1,83 @@
 @charset "UTF-8";
 
+:root {
+    --theme-color-main-1 : #7A98D1;
+    --theme-color-main-2 : #90AED5;
+    --theme-color-sub-1 : #eeeeea;
+    --theme-color-sub-2 : #C5BDAC;
+    --theme-color-emp-1 : #4C3826;
+    --theme-color-emp-2 : #765A42;
+    --theme-color-text-1 : #4e3f34;
+}
+
+html {
+    background-color: var(--theme-color-main-1);
+}
+
+body {
+    color: var(--theme-color-text-1);
+}
+
+div.container-box {
+    display: block;
+    background-color: var(--theme-color-sub-1);
+    width: 520px;
+    margin: 0 auto;
+    margin-top: 65px;
+    padding: 30px;
+    border: 10px solid var(--theme-color-emp-1);
+    border-radius: 30px;
+}
+
+h1 {
+    margin: 0;
+    margin-bottom: 26px;
+    text-align: center;
+}
+
+h1 > small {
+    font-size: 60%;
+}
+
 div.menu-div {
-    margin: 5px;
+    margin: 8px 0;
 }
 
 span.menu {
     display: inline-block;
-    box-sizing: border-box;
-    width: 120px;
-    height: 24px;
+    font-weight: bold;
+    width: 90px;
+    height: 25px;
+    line-height: 25px;
 }
 
-.item {
-    display: inline-block;
-    box-sizing: border-box;
-    width: 220px;
-    height: 24px;
+select#printerList {
+    padding: 2px;
+    width: 265px;
+    height: 25px;
+    line-height: 25px;
+}
+
+button#submitButton {
+    border: 0;
+    background-color: var(--theme-color-emp-2);
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+    width: 160px;
+    border-radius: 5px;
+}
+
+button#submitButton:hover {
+    opacity: 0.9;
+    cursor: pointer;
+}
+
+div.footer-area {
+    margin-top: 24px;
+    text-align: center;
+}
+
+#fileSelect, #printerList {
+    cursor: pointer;
 }

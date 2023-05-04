@@ -18,6 +18,7 @@ function onLoadEvent() {
         error: function () {
             document.getElementById('alertMessage').innerHTML 
                 = '서버로부터 응답을 받을 수 없습니다. 관리자에게 문의하세요.';
+            document.getElementById('alertMessage').style.color = '#D21312';
         }
     });
 }
