@@ -4,10 +4,18 @@ namespace PrintSolutionAPI
 {
     public class Program
     {
+        /// <summary>
+        /// 프로그램 동작 중 여부 확인
+        /// </summary>
         public static bool Running { get; private set; }
 
+        /// <summary>
+        /// 프로그램 동작 시작
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
+            #region 프로그램 동작 시작
             Running = true;
 
             // Start Scheduler
@@ -40,11 +48,15 @@ namespace PrintSolutionAPI
                        .AllowAnyHeader()
                 );
 
+            // Web App 동작 시작
             app.Run("http://*:9203");
+            #endregion
 
+            #region 프로그램 동작 종료
             // After: Ctrl + C
             Console.WriteLine("\r\nStoping Schedules...");
             Running = false;
+            #endregion
 
         }
     }

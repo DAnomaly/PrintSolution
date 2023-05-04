@@ -5,10 +5,19 @@ using System.Text.Json;
 
 namespace PrintSolutionAPI.Scheduler
 {
+    /// <summary>
+    /// 프린터 상태 확인 스케쥴러 클래스
+    /// </summary>
     public static class LoadStatusSch
     {
+        /// <summary>
+        /// 프린터 정보 저장 폴더
+        /// </summary>
         public static string PrintFolderName { get { return "PRINTER"; } }
 
+        /// <summary>
+        /// 실제 동작
+        /// </summary>
         private static void Task()
         {
             while (Program.Running)
@@ -75,11 +84,14 @@ namespace PrintSolutionAPI.Scheduler
                 }
                 #endregion
 
-                // 100초 마다 반복
-                Thread.Sleep(TimeSpan.FromSeconds(100));
+                // 30초 마다 반복
+                Thread.Sleep(TimeSpan.FromSeconds(30));
             }
         }
 
+        /// <summary>
+        /// 시작 명령 (Thread)
+        /// </summary>
         public static void Start()
         {
             Thread taskThread = new Thread(Task);

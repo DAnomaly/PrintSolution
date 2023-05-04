@@ -5,7 +5,10 @@ namespace Danomaly.GetPrintStatus
 {
     internal class Program
     {
-        static void Main(string[] args)
+        /// <summary>
+        /// 프로그램 주 진입점
+        /// </summary>
+        static void Main()
         {
             string[] printers = PrintUtil.GetPrintQueues();
             Console.WriteLine("Printer Count: " + printers.Length);

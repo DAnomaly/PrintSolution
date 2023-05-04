@@ -21,6 +21,10 @@ namespace PrintSolutionAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// 프린터 목록, 상태 확인
+        /// </summary>
+        /// <returns>프린터 목록, 상태 (JSON)</returns>
         [HttpGet]
         [Route("Show")]
         public IEnumerable<PrinterDTO> Show()
@@ -50,6 +54,11 @@ namespace PrintSolutionAPI.Controllers
             return printerList.ToArray();
         }
 
+        /// <summary>
+        /// 파일 수신
+        /// </summary>
+        /// <param name="file">업로드 파일</param>
+        /// <returns>파일 수신 성공여부, 저장파일명</returns>
         [HttpPost]
         [RequestSizeLimit(10_485_760)]
         [Route("Upload")]
@@ -93,6 +102,12 @@ namespace PrintSolutionAPI.Controllers
             return response;
         }
 
+        /// <summary>
+        /// 프린터 출력명령
+        /// </summary>
+        /// <param name="printer">프린터이름</param>
+        /// <param name="filename">저장파일이름</param>
+        /// <returns>프린터 명령 등록 여부</returns>
         [HttpGet]
         [Route("Call")]
         public IDictionary<string, Object> Call(string printer, string filename)
