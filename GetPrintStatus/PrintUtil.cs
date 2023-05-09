@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Printing;
+using System.Text.RegularExpressions;
 
 namespace Danomaly.GetPrintStatus
 {
@@ -71,76 +73,77 @@ namespace Danomaly.GetPrintStatus
                     status = printStatus.ToString();
                     if (printStatus == PrintQueueStatus.None)
                     {
-                        string ip = printQueue.QueuePort.Name;
-                        if (ip.IndexOf(':') != -1)
-                            ip = ip.Substring(0, ip.IndexOf(':'));
-                        string url = ip;
-                        if (!url.Contains("http"))
-                            url = "http://" + ip;
+                        string ipPattern = @"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])";
+                        string ip = Regex.Match(printQueue.QueuePort.Name, ipPattern).Value;
 
                         #region SyncThru 웹서버에 통신
-                        try
+                        if (ip != string.Empty)
                         {
-                            #region 1. http://[프린터IP주소]에 통신
-                            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                            request.Method = "GET";
-                            request.Timeout = 30 * 1000;
-                            HttpStatusCode statusCode;
-                            using (HttpWebResponse resp = (HttpWebResponse)request.GetResponse())
-                                statusCode = resp.StatusCode;
-                            #endregion
+                            string url = "http://" + ip;
 
-                            #region 2. http://[프린터IP주소]에 통신이 가능하면 sws url에서 프린터 상태 가져오기
-                            string responseText = string.Empty;
-                            if (statusCode == HttpStatusCode.OK)
+                            try
                             {
-                                if (url[url.Length - 1] != '/')
-                                    url += '/';
-                                url += "sws/app/information/home/home.json";
-                                request = (HttpWebRequest)WebRequest.Create(url);
+                                #region 1. http://[프린터IP주소]에 통신
+                                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                                 request.Method = "GET";
                                 request.Timeout = 10 * 1000;
+                                HttpStatusCode statusCode;
                                 using (HttpWebResponse resp = (HttpWebResponse)request.GetResponse())
-                                    if (resp.StatusCode == HttpStatusCode.OK)
-                                    {
-                                        Stream respStream = resp.GetResponseStream();
-                                        using (StreamReader sr = new StreamReader(respStream))
-                                            responseText = sr.ReadToEnd();
-                                    }
-                            }
-                            #endregion
+                                    statusCode = resp.StatusCode;
+                                #endregion
 
-                            #region 3. 응답 분석
-                            if (responseText != string.Empty)
+                                #region 2. http://[프린터IP주소]에 통신이 가능하면 sws url에서 프린터 상태 가져오기
+                                string responseText = string.Empty;
+                                if (statusCode == HttpStatusCode.OK)
+                                {
+                                    if (url[url.Length - 1] != '/')
+                                        url += '/';
+                                    url += "sws/app/information/home/home.json";
+                                    request = (HttpWebRequest)WebRequest.Create(url);
+                                    request.Method = "GET";
+                                    request.Timeout = 10 * 1000;
+                                    using (HttpWebResponse resp = (HttpWebResponse)request.GetResponse())
+                                        if (resp.StatusCode == HttpStatusCode.OK)
+                                        {
+                                            Stream respStream = resp.GetResponseStream();
+                                            using (StreamReader sr = new StreamReader(respStream))
+                                                responseText = sr.ReadToEnd();
+                                        }
+                                }
+                                #endregion
+
+                                #region 3. 응답 분석
+                                if (responseText != string.Empty)
+                                {
+                                    // responseText = responseText.Replace(" ", "");
+                                    JObject jObject = JObject.Parse(responseText);
+                                    if (jObject["status"].Value<Int16>("hrDeviceStatus") >= 0 && jObject["status"].Value<Int16>("hrDeviceStatus") <= 2)
+                                        useYN = true;
+                                    else
+                                        useYN = false;
+                                    status = jObject["status"].Value<string>("status1");
+                                    if (jObject["status"].Value<string>("status2") != string.Empty)
+                                        status += "\r\n" + jObject["status"].Value<string>("status2");
+                                    if (jObject["status"].Value<string>("status3") != string.Empty)
+                                        status += "\r\n" + jObject["status"].Value<string>("status3");
+                                    if (jObject["status"].Value<string>("status4") != string.Empty)
+                                        status += "\r\n" + jObject["status"].Value<string>("status4");
+
+                                    while (status.Contains("  "))
+                                        status = status.Replace("  ", " ");
+                                    if (status.Contains("\n"))
+                                        status = status.Replace("\n", string.Empty);
+                                    if (status.Contains("\r"))
+                                        status = status.Replace("\r", string.Empty);
+                                    status = status.Trim();
+                                }
+                                #endregion
+                            }
+                            catch (WebException)
                             {
-                                // responseText = responseText.Replace(" ", "");
-                                JObject jObject = JObject.Parse(responseText);
-                                if (jObject["status"].Value<Int16>("hrDeviceStatus") >= 0 && jObject["status"].Value<Int16>("hrDeviceStatus") <= 2)
-                                    useYN = true;
-                                else
-                                    useYN = false;
-                                status = jObject["status"].Value<string>("status1");
-                                if (jObject["status"].Value<string>("status2") != string.Empty)
-                                    status += "\r\n" + jObject["status"].Value<string>("status2");
-                                if (jObject["status"].Value<string>("status3") != string.Empty)
-                                    status += "\r\n" + jObject["status"].Value<string>("status3");
-                                if (jObject["status"].Value<string>("status4") != string.Empty)
-                                    status += "\r\n" + jObject["status"].Value<string>("status4");
-
-                                while (status.Contains("  "))
-                                    status = status.Replace("  ", " ");
-                                if (status.Contains("\n"))
-                                    status = status.Replace("\n", string.Empty);
-                                if (status.Contains("\r"))
-                                    status = status.Replace("\r", string.Empty);
-                                status = status.Trim();
                             }
                             #endregion
                         }
-                        catch (WebException)
-                        {
-                        }
-                        #endregion
                     }
                     else
                     {
